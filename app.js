@@ -24,9 +24,9 @@ app.use(session({
 const connection = require('./database/db');
 const res = require('express/lib/response');
 
-app.get('/', (req, res) => {
-    res.render('index', { msg: 'Yeferson shut up' });
-})
+// app.get('/', (req, res) => {
+//     res.render('index', { msg: 'Yeferson shut up' });
+// })
 
 app.get('/login', (req, res) => {
     res.render('login');
@@ -76,6 +76,7 @@ app.post('/auth', async (req, res) => {
                     ruta: 'login'
                 });
             } else {
+                req.session.loggedin = true;
                 req.session.name = result[0].name
                 res.render('login', {
                     alert: true,
@@ -98,6 +99,20 @@ app.post('/auth', async (req, res) => {
             showConfirmButton: true,
             timer: 1500,
             ruta: 'login'
+        })
+    }
+})
+
+app.get('/', (req, res) => {
+    if(req.session.loggedin){
+        res.render('index',{
+            login: true,
+            name: req.session.name
+        });
+    }else{
+        res.render('index',{
+        login: false,
+        name: 'Debes de iniciar sesion'
         })
     }
 })
